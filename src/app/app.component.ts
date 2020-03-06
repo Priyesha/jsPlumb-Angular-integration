@@ -1,22 +1,27 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
-import { jsPlumb } from 'jsplumb';
+import { Component, OnInit } from '@angular/core';
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements AfterViewInit, OnInit {
+export class AppComponent implements OnInit {
   title = ' Angular jsPlumb Integration';
-  jsPlumbInstance;
-  totalnodes = 5;
-  nodes = [];
+  nodes = [{id: 'Node 0', name: 'Start', type: 'start'}];
+  index = 0;
 
   ngOnInit() {
-    // this.nodes = 
+    this.addNode(8);
   }
-  ngAfterViewInit() {
-    this.jsPlumbInstance = jsPlumb.getInstance();
+
+  addNode(n) {
+    for (let i = 0; i < n; i++) {
+    this.nodes.push({id : 'Node' + (this.index + 1),
+                     name: 'Node' + (this.index + 1),
+                                  type: ''});
+    this.index += 1;
+    }
   }
 }
 

@@ -1,24 +1,10 @@
 <div class="container">
-<div class="panel-one">
-  <div class="node" *ngFor="let dummy of ' '.repeat(totalnodes).split('')">
+    <div class="panel-one">
+        <button (click)="addNode(1)">Create new Node</button>
+        <app-node [nodes]="nodes"></app-node>
     </div>
-    <button (click)="totalnodes = totalnodes +1">Create new Node</button>
-
-</div>
-<div class="vl"></div>
-<div class="panel-two"></div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
+    <div class="vl"></div>
+    <div class="panel-two"></div>
+    </div>
 
 <router-outlet></router-outlet>
