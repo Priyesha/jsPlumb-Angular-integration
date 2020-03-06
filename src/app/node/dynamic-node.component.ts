@@ -62,12 +62,12 @@ export class DynamicNodeComponent implements AfterViewInit {
     };
 
     if (this.node.type === 'start') {
-      this.jsPlumbInstance.addEndpoint(this.node.id, {anchor: 'Right'}, Endpoint1); // source
+      this.jsPlumbInstance.addEndpoint(this.node.id, {anchor: 'Right', uuid: this.node.id}, Endpoint1); // source
     } else if (this.node.type === 'end') {
-      this.jsPlumbInstance.addEndpoint(this.node.id, {anchor: 'Left'}, Endpoint2);  // target
+      this.jsPlumbInstance.addEndpoint(this.node.id, {anchor: 'Left', uuid: this.node.id}, Endpoint2);  // target
     } else {
-      this.jsPlumbInstance.addEndpoint(this.node.id, {anchor: 'Right'}, Endpoint1); // source
-      this.jsPlumbInstance.addEndpoint(this.node.id, {anchor: 'Left'}, Endpoint2);  // target
+      this.jsPlumbInstance.addEndpoint(this.node.id, {anchor: 'Right', uuid: this.node.id}, Endpoint1); // source
+      this.jsPlumbInstance.addEndpoint(this.node.id, {anchor: 'Left', uuid: this.node.id}, Endpoint2);  // target
     }
     this.jsPlumbInstance.draggable(this.node.id);
 }

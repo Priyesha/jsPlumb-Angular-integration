@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { NodeComponent } from './node/node.component';
 import { DynamicNodeComponent } from './node/dynamic-node.component';
 import { NodeService } from './node/node.service';
-
+import { SimpleModalModule } from 'ngx-simple-modal';
 @NgModule({
   declarations: [
     AppComponent,
@@ -16,7 +16,8 @@ import { NodeService } from './node/node.service';
   entryComponents: [DynamicNodeComponent],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    SimpleModalModule
   ],
   providers: [NodeService],
   bootstrap: [AppComponent]

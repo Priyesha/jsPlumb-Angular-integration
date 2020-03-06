@@ -1,5 +1,4 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ViewContainerRef, Input, OnChanges } from '@angular/core';
-import { jsPlumb } from 'jsplumb';
 import { NodeService } from './node.service';
 
 @Component({
@@ -7,39 +6,17 @@ import { NodeService } from './node.service';
   templateUrl: './node.component.html',
   styleUrls: ['./node.component.scss']
 })
-export class NodeComponent implements OnChanges, AfterViewInit {
+export class NodeComponent implements OnChanges, OnInit {
 
   @Input() nodes;
   @ViewChild('nodes', { read: ViewContainerRef, static: true }) viewContainerRef: ViewContainerRef;
   constructor(private nodeService: NodeService) {
   }
 
-  ngAfterViewInit(): void {
-    const self = this;
-    this.nodeService.jsPlumbInstance.ready(function() {
-    const common = {
-         connector: ['Flowchart'],
-         anchor: ['Left', 'Right'],
-         endpoint: 'Dot'
-       };
-    this.nodeService.jsPlumbInstance.connect({
-         source: '',
-         target: '',
-         paintStyle: { stroke: 'lightgray', strokeWidth: 3 },
-         endpointStyle: { fillStyle: 'lightgray', outlineStroke: 'gray' },
-         overlays: [
-           ['Arrow', { width: 24, length: 24, location: 0.80 }],
-           ['Label', {
-             label: '', id: '', cssClass: '',
-             events: {
-               click(labelOverlay, originalEvent) {
-                 console.log('jfljla');
-               }
-             }
-           }]
-         ]
-       }, common);
-    });
+  ngOnInit() {
+    this.nodeService.jsPlumbInstance.bind('connection', function(info) {
+      console.log('connection made');
+   });
   }
 
   ngOnChanges() {
@@ -50,5 +27,15 @@ export class NodeComponent implements OnChanges, AfterViewInit {
         this.nodeService.addDynamicNode(node);
       });
     }
+  }
+
+  saveNodeJson(){
+
+    const connections = (this.nodeService.jsPlumbInstance.getAllConnections() as any[])
+        .map((conn) => ({ uuids: conn.getUuids() }));
+
+    // const json = JSON.stringify({ nodes, connections });
+
+    console.log(connections);
   }
 }

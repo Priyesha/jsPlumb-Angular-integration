@@ -28,7 +28,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "./node_modules/ngx-simple-modal/styles/simple-modal.scss"
             ],
             "scripts": [
               "./node_modules/jsplumb/dist/js/jsplumb.min.js"
