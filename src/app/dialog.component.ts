@@ -3,7 +3,7 @@ import { SimpleModalComponent } from 'ngx-simple-modal';
 
 export interface DialogModel {
   title: string;
-  questions: any;
+  questions: {name: '', type: ''};
 }
 
 @Component({
@@ -14,28 +14,28 @@ export interface DialogModel {
         <h4>{{title}}</h4>
       </div>
       <div class="modal-body">
-        <ng-template ngFor let-pair [ngForOf]="keys(questions)" let-i="index">
-        <label>{{pair}}</label>
-        <input type="text" class="form-control" [(ngModel)]="questions[pair]" name="name" />
-        </ng-template>
+        <label>Name</label>
+        <input type="text" class="form-control" [(ngModel)]="questions['name']" name="name" />
+        <label>Type</label>
+        <select [(ngModel)]="questions['type']">
+        <option value="middle">Middle</option>
+        <option value="end">End</option>
+        </select>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-danger" (click)="close()">Cancel</button>
-        <button type="button" class="btn btn-primary" (click)="apply()">Confirm</button>
+        <button type="button" class="btn btn-primary" (click)="apply()">Save</button>
       </div>
     </div>
   `
 })
 export class DialogComponent extends SimpleModalComponent<DialogModel, DialogModel['questions']> implements DialogModel {
   title: string;
-  questions: {Name: '', Type: ''};
+  questions: {name: '', type: ''};
   constructor() {
     super();
   }
 
-  keys(obj) {
-    return Object.keys(obj);
-  }
   apply() {
     this.result = this.questions;
     this.close();

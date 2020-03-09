@@ -17,20 +17,18 @@ export class NodeComponent implements OnChanges, AfterViewInit {
 
   ngAfterViewInit() {
     this.nodeService.jsPlumbInstance.bind('connection', info => {
-      console.log('connection made', info.targetId);
-      // this.simpleModalService.addModal
       this.simpleModalService.addModal(DialogComponent, {
         title: 'Dialog',
-        questions: { Name: '', Type: ''}})
+        questions: { name: '', type: ''}})
         .subscribe((result) => {
-          // this.nodes
-          console.log('inside subscribe', result);
           const targetNode = this.nodes.find(node => node.id === info.targetId);
           if (targetNode) {
-            targetNode.name = result.Name;
-            targetNode.type = result.Type;
-          }
-          console.log(this.nodes);
+            targetNode.name = result.name;
+            targetNode.type = result.type;
+            if (targetNode.type === 'end') {
+            this.nodeService.jsPlumbInstance.deleteEndpoint(info.targetId + 'right');
+        }
+      }
         });
    });
   }
@@ -43,15 +41,5 @@ export class NodeComponent implements OnChanges, AfterViewInit {
         this.nodeService.addDynamicNode(node);
       });
     }
-  }
-
-  saveNodeJson(){
-
-    const connections = (this.nodeService.jsPlumbInstance.getAllConnections() as any[])
-        .map((conn) => ({ uuids: conn.getUuids() }));
-
-    // const json = JSON.stringify({ nodes, connections });
-
-    console.log(connections);
   }
 }

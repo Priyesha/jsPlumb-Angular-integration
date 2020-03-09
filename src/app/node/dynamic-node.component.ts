@@ -1,5 +1,6 @@
 import { Component, Input, AfterViewInit, OnChanges } from '@angular/core';
-import { NodeService } from './node.service';
+import { SimpleModalService } from 'ngx-simple-modal';
+import { DialogComponent } from '../dialog.component';
 import { jsPlumb } from 'jsplumb';
 
 export interface Node {
@@ -11,8 +12,9 @@ export interface Node {
 @Component({
   selector: 'app-dynamic-node',
   template: `
-  <div class="node"  id="{{node.id}}" style="top: 0; left: 50%;">
-		{{node.name}}
+  <div (dblclick)="editNode(node)" class="node"  id="{{node.id}}" style="top: 0; left: 50%;">
+    {{node.name}}
+    <i (click)="removeNode(node)" class="material-icons close">clear</i>
   </div>`,
   styles: [`
   .node {
@@ -23,59 +25,80 @@ export interface Node {
   box-shadow: 0 10px 40px 0 #B0C1D9;
   text-align: center;
 }
+ .close {
+   font-size: 10px;
+   position: absolute;
+   right: 9px;
+   top: 0px;
+   cursor: pointer;
+ }
   `]
 })
-export class DynamicNodeComponent implements OnChanges, AfterViewInit {
+export class DynamicNodeComponent implements AfterViewInit {
 
   @Input() node: Node;
   @Input() jsPlumbInstance;
   sourceEndPoint: any;
   destinationEndPoint: any;
-  constructor() { }
+  exampleDropOptions = {
+    tolerance: 'touch',
+    hoverClass: 'dropHover',
+    activeClass: 'dragActive'
+  };
+  source = {
+    endpoint: ['Dot', { radius: 7 }],
+    paintStyle: { fill: '#99cb3a' },
+    isSource: true,
+    scope: 'jsPlumb_DefaultScope',
+    connectorStyle: { stroke: '#99cb3a', strokeWidth: 3 },
+    connector: ['Bezier', { curviness: 63 }],
+    maxConnections: 1,
+    isTarget: false,
+    connectorOverlays: [['Arrow', { location: 1 }]],
+    dropOptions: this.exampleDropOptions
+  };
+  destination = {
+    endpoint: ['Dot', { radius: 4 }],
+    paintStyle: { fill: '#ffcb3a' },
+    isSource: false,
+    scope: 'jsPlumb_DefaultScope',
+    connectorStyle: { stroke: '#ffcb3a', strokeWidth: 6 },
+    connector: ['Bezier', { curviness: 23 }],
+    maxConnections: 1,
+    isTarget: true,
+    dropOptions: this.exampleDropOptions
+  };
+  constructor(private simpleModalService: SimpleModalService) { }
   ngAfterViewInit() {
-    const exampleDropOptions = {
-      tolerance: 'touch',
-      hoverClass: 'dropHover',
-      activeClass: 'dragActive'
-    };
-    const source = {
-      endpoint: ['Dot', { radius: 7 }],
-      paintStyle: { fill: '#99cb3a' },
-      isSource: true,
-      scope: 'jsPlumb_DefaultScope',
-      connectorStyle: { stroke: '#99cb3a', strokeWidth: 3 },
-      connector: ['Bezier', { curviness: 63 } ],
-      maxConnections: 1,
-      isTarget: false,
-      connectorOverlays: [ [ 'Arrow', { location: 1 } ] ],
-      dropOptions: exampleDropOptions
-    };
-    const destination = {
-      endpoint: ['Dot', { radius: 4 }],
-      paintStyle: { fill: '#ffcb3a' },
-      isSource: false,
-      scope: 'jsPlumb_DefaultScope',
-      connectorStyle: { stroke: '#ffcb3a', strokeWidth: 6 },
-      connector: ['Bezier', { curviness: 23 } ],
-      maxConnections: 1,
-      isTarget: true,
-      dropOptions: exampleDropOptions
-    };
-
     this.sourceEndPoint = this.jsPlumbInstance.addEndpoint(this.node.id,
-      { anchor: 'Right', uuid: this.node.id }, source);
+      { anchor: 'Right', uuid: this.node.id + 'right' }, this.source);
     if (this.node.type !== 'start') {
       this.destinationEndPoint = this.jsPlumbInstance.addEndpoint(this.node.id,
-        {anchor: 'Left', uuid: this.node.id}, destination);
+        { anchor: 'Left', uuid: this.node.id + 'left' }, this.destination);
     }
     this.jsPlumbInstance.draggable(this.node.id);
   }
 
-  ngOnChanges() {
-      console.log('ngOnChanges', this.node);
-      if (this.node.type === 'end') {
-        this.jsPlumbInstance.deleteEndpoint(this.node.id, this.sourceEndPoint);
-      }
+  removeNode(node) {
+    this.jsPlumbInstance.removeAllEndpoints(node.id);
+    this.jsPlumbInstance.remove(node.id);
+  }
+
+  editNode(node) {
+    this.simpleModalService.addModal(DialogComponent, {
+      title: 'Dialog',
+      questions: { name: node.name, type: node.type }
+    })
+      .subscribe((result) => {
+        this.node.name = result.name;
+        this.node.type = result.type;
+        if (node.type === 'end') {
+          this.jsPlumbInstance.deleteEndpoint(node.id + 'right');
+        } else {
+          this.jsPlumbInstance.addEndpoint(this.node.id,
+            { anchor: 'Right', uuid: this.node.id + 'right' }, this.source);
+        }
+      });
   }
 }
 

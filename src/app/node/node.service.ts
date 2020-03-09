@@ -24,7 +24,6 @@ import { jsPlumb } from 'jsplumb';
     public addDynamicNode(node: any) {
       const factory = this.factoryResolver.resolveComponentFactory(DynamicNodeComponent);
       const component = factory.create(this.rootViewContainer.parentInjector);
-      console.log('addDynamicNode', node);
       (<any>component.instance).node = node;
       (<any>component.instance).jsPlumbInstance = this.jsPlumbInstance;
 
