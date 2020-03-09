@@ -7,17 +7,22 @@ import { NodeComponent } from './node/node.component';
 import { DynamicNodeComponent } from './node/dynamic-node.component';
 import { NodeService } from './node/node.service';
 import { SimpleModalModule } from 'ngx-simple-modal';
+import { DialogComponent } from './dialog.component';
+import { FormsModule } from '@angular/forms';
+
 @NgModule({
   declarations: [
     AppComponent,
     NodeComponent,
-    DynamicNodeComponent
+    DynamicNodeComponent,
+    DialogComponent
   ],
-  entryComponents: [DynamicNodeComponent],
+  entryComponents: [DynamicNodeComponent, DialogComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    SimpleModalModule
+    FormsModule,
+    SimpleModalModule.forRoot({container: 'modal-container'})
   ],
   providers: [NodeService],
   bootstrap: [AppComponent]

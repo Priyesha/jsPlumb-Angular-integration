@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AppComponent implements OnInit {
   title = ' Angular jsPlumb Integration';
-  nodes = [{id: 'Node 0', name: 'Start', type: 'start'}];
+  nodes = [{id: 'Node0', name: 'Start', type: 'start'}];
   index = 0;
 
   ngOnInit() {

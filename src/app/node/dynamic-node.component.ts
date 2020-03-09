@@ -1,4 +1,4 @@
-import { Component, Input, AfterViewInit } from '@angular/core';
+import { Component, Input, AfterViewInit, OnChanges } from '@angular/core';
 import { NodeService } from './node.service';
 import { jsPlumb } from 'jsplumb';
 
@@ -25,11 +25,12 @@ export interface Node {
 }
   `]
 })
-export class DynamicNodeComponent implements AfterViewInit {
+export class DynamicNodeComponent implements OnChanges, AfterViewInit {
 
   @Input() node: Node;
   @Input() jsPlumbInstance;
-
+  sourceEndPoint: any;
+  destinationEndPoint: any;
   constructor() { }
   ngAfterViewInit() {
     const exampleDropOptions = {
@@ -37,7 +38,7 @@ export class DynamicNodeComponent implements AfterViewInit {
       hoverClass: 'dropHover',
       activeClass: 'dragActive'
     };
-    const Endpoint1 = {
+    const source = {
       endpoint: ['Dot', { radius: 7 }],
       paintStyle: { fill: '#99cb3a' },
       isSource: true,
@@ -49,7 +50,7 @@ export class DynamicNodeComponent implements AfterViewInit {
       connectorOverlays: [ [ 'Arrow', { location: 1 } ] ],
       dropOptions: exampleDropOptions
     };
-    const Endpoint2 = {
+    const destination = {
       endpoint: ['Dot', { radius: 4 }],
       paintStyle: { fill: '#ffcb3a' },
       isSource: false,
@@ -61,15 +62,20 @@ export class DynamicNodeComponent implements AfterViewInit {
       dropOptions: exampleDropOptions
     };
 
-    if (this.node.type === 'start') {
-      this.jsPlumbInstance.addEndpoint(this.node.id, {anchor: 'Right', uuid: this.node.id}, Endpoint1); // source
-    } else if (this.node.type === 'end') {
-      this.jsPlumbInstance.addEndpoint(this.node.id, {anchor: 'Left', uuid: this.node.id}, Endpoint2);  // target
-    } else {
-      this.jsPlumbInstance.addEndpoint(this.node.id, {anchor: 'Right', uuid: this.node.id}, Endpoint1); // source
-      this.jsPlumbInstance.addEndpoint(this.node.id, {anchor: 'Left', uuid: this.node.id}, Endpoint2);  // target
+    this.sourceEndPoint = this.jsPlumbInstance.addEndpoint(this.node.id,
+      { anchor: 'Right', uuid: this.node.id }, source);
+    if (this.node.type !== 'start') {
+      this.destinationEndPoint = this.jsPlumbInstance.addEndpoint(this.node.id,
+        {anchor: 'Left', uuid: this.node.id}, destination);
     }
     this.jsPlumbInstance.draggable(this.node.id);
-}
+  }
+
+  ngOnChanges() {
+      console.log('ngOnChanges', this.node);
+      if (this.node.type === 'end') {
+        this.jsPlumbInstance.deleteEndpoint(this.node.id, this.sourceEndPoint);
+      }
+  }
 }
 
